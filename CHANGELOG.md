@@ -1,7 +1,7 @@
 # ALTRP
 
 ## Changelog
-### test version build 188
+### test version build 217
 
 
 ### 1.4.9
@@ -21,12 +21,18 @@
 * Add `Dropbar Toggle` Widget Action
 * Add `Spacing` Presets for Sizes
 * Add Dynamics Settings to Bar Diagram Widget
+* Add Language Update By Get Parameter
+* Add Filter for Model Data Before Render Page
+* Add Category Filter for Robotizers in Admin
 * Optimize Global CSS Variables Generating
 * Select Widget can Receive Default value as Single Option Object 
 * Fix Possible Node Binding Error
 * Fix Non Latin Issue URI components
 * Fix Dynamic Background Style Settings Error in Section
 * Fix Model After Update and All Delete Hook
+* Fix Media Content Updating
+* Fix Editor Revision Bug
+* Fix Translating Content In Accordion Widget
 * Update Permission requirement for APi Robotizers
 
 ### 1.4.8 

@@ -446,6 +446,10 @@ export default class Source extends BaseModel {
         this.methodBody = `
     const qs = httpContext?.request.qs() || {};
     const all = httpContext?.request.all() || {};
+    const request = httpContext?.request || {};
+    const response = httpContext?.response || {};
+    const session = httpContext?.session || {};
+    const auth = httpContext?.auth || {};
     const lang = httpContext?.request.cookie('altrp_lang') || require('../../helpers/get_altrp_setting').default('site_language', 'en');
     const status = httpContext?.response.status || (()=>{});
     this.setCustomizerData('context.CurrentModel', ${this.model.name} );
@@ -462,7 +466,17 @@ export default class Source extends BaseModel {
     this.setCustomizerData('altrpuser', httpContext?.auth?.user);
     this.setCustomizerData('current_user', httpContext?.auth?.user);
     this.setCustomizerData('context.current_user', httpContext?.auth?.user);
-    ${this?.customizer?.getMethodContent() || ''}
+
+    const __callback = async()=>{
+      ${this?.customizer?.getMethodContent() || ''}
+    }
+    if(all.__altrp_async){
+      __callback().catch(e=>{
+        console.error('Async error in ${this.customizer?.name}',e)
+      })
+    } else {
+      return await __callback()
+    }
     `
       }
         break;

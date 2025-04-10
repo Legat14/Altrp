@@ -1,5 +1,6 @@
 const DEFAULT_REACT_ELEMENTS = [
   'action-trigger',
+  'accordion',
   'input',
   'input-select',
   'input-date-range',

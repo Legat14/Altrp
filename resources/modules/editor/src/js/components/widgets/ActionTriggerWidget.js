@@ -9,6 +9,7 @@ class ActionTriggerWidget extends React.Component {
     this.elementId = props.element.getId();
     props.element.component = this;
     this.subscribeActions()
+
   }
 
   /**
@@ -51,11 +52,17 @@ class ActionTriggerWidget extends React.Component {
   }
 
 
+  altrpNavigatListener = ()=>{
+    setTimeout(this.doActions, Number(this.element.getResponsiveLockedSetting('timeout')) || 1000)
+
+  }
+
   /**
    * Подписать таймаут действия
    */
   subscribeTimeoutTriggers() {
-    setTimeout(this.doActions, this.element.getResponsiveLockedSetting('timeout') || 1000)
+    setTimeout(this.doActions, Number(this.element.getResponsiveLockedSetting('timeout')) || 1000)
+    window.addEventListener('altrp-navigated', this.altrpNavigatListener)
   }
   /**
    * Подписать интервальные действия
@@ -74,15 +81,18 @@ class ActionTriggerWidget extends React.Component {
 
   componentWillUnmount() {
     if(this.intervalId){
-      console.log('clearInterval', this.intervalId);
       clearInterval(this.intervalId)
       return
     }
     let event =  this.element.getResponsiveLockedSetting('event') || ''
 
     if(this.type === 'event'){
-      console.log('removeEventListener', event);
+      console.log(`unmo8unt on ${event}`)
       document.removeEventListener(event, this.onEvent)
+    } else {
+      console.log(`unmo8unt on ${event}`)
+      window.removeEventListener('altrp-navigated', this.altrpNavigatListener)
+
     }
   }
 

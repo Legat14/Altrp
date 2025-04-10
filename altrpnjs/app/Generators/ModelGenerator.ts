@@ -135,7 +135,7 @@ import {softDeleteQuery, softDelete} from "../../helpers/delete";
 
     const {settings = {}} = this.model
 
-    const {static_props = []} = settings
+    const {static_props = []} = (settings || {})
     return `
   ${static_props.map(({
    // @ts-ignore

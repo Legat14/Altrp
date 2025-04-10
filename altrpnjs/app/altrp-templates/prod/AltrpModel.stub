@@ -45,7 +45,8 @@ class {{{classname}}} extends AltrpBaseModel {
   }
 
   static async beforeUpdate(model) {
-    await Event.default.emit("altrp_event",{type: "altrp_models.{{{classname}}}.beforeUpdate", data: model})
+    model.__oldValue = {...model.$original};
+    await Event.default.emit("altrp_event",{type: "altrp_models.{{{classname}}}.beforeUpdate", data: model});
   }
 
   static async afterUpdate(model) {

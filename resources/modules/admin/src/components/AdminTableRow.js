@@ -74,7 +74,8 @@ export default class AdminTableRow extends Component {
           if (column.name === 'image') {
             tag = 'img'
             props.className = 'td__content td__content-image'
-            props.src = row.url
+            props.src = row.url + `?${row.updated_at}`
+            props.key = row.url + `?${row.updated_at}`
             props.onClick = row.clickToImage
             delete props.children
           }
@@ -99,7 +100,6 @@ export default class AdminTableRow extends Component {
               _.get(row, column.name, false).toString()
             ];
           }
-
           return (
             <td
               className={`admin-table__td td ${column.name === 'image' ? 'admin-table__td-image' : ''}`}

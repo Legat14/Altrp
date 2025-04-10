@@ -15,7 +15,7 @@ ${(props) => {
   return ''
 }}
 }
-&::before{
+&&::before{
 ${(props) => {
   const {settings, height} = props;
   let style = '';
@@ -28,6 +28,7 @@ ${(props) => {
     } else if(Number(aspect_ratio_size)){
       style += `padding-top:${aspect_ratio_size}%;`;
     }
+    console.log(style)
     return style;
   }
   if (height && _.isString(height) && height.indexOf('%') === -1) {

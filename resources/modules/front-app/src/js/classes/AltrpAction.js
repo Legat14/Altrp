@@ -1349,7 +1349,7 @@ class AltrpAction extends AltrpModel {
       }
       return actionResult;
     } catch (error) {
-      console.error('Evaluate error in doActionCustomCode: "' + error.message + '"', this.getElement(), error.stack);
+      console.error('Evaluate error in doActionCustomCode: "' + error.message + '"', this.getElement(),code, error.stack);
       return {success: false};
     }
   }

@@ -13,6 +13,7 @@ import StartFilled from "../../../../admin/src/svgs/start-filled.svg";
 import Scrollbars from "react-custom-scrollbars";
 import { changeTemplateStatus } from "../store/template-status/actions";
 import CONSTANTS from "../consts";
+import BaseElement from "../classes/elements/BaseElement";
 
 class HistoryPanel extends Component {
   constructor(props) {
@@ -213,6 +214,7 @@ const RevisionTabContent = () => {
     let revisionRootElement = JSON.parse(response[0].data);
 
     let parsedData = getFactory().parseData(revisionRootElement);
+    parsedData.id = BaseElement.generateId()
     getTemplateDataStorage().replaceAll(parsedData);
   };
   return (

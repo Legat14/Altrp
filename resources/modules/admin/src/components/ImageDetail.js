@@ -6,6 +6,9 @@ import AutoSave from './AutoSaveDocumentDetail';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {createGlobalStyle} from "styled-components";
 import Scrollbars from "react-custom-scrollbars";
+import getExtension from "../../../editor/src/js/helpers/get-extension";
+import Resource from "../../../editor/src/js/classes/Resource";
+import altrpRandomId from "../../../front-app/src/js/functions/altrpRandomId";
 
 const GlobalStyle = createGlobalStyle`
   #admin {
@@ -17,7 +20,9 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export class ImageDetail extends React.Component {
   state = {}
-
+  updateResource = new Resource({
+    route: `/admin/ajax/media`
+  })
   async componentDidUpdate(prevProps) {
     if (prevProps.imageId !== this.props.imageId && this.props.imageId !== null) {
       const source = await this.props.getAsset(this.props.imageId)
@@ -54,12 +59,33 @@ export class ImageDetail extends React.Component {
     }
     await sleep(1000)
   }
+  onChangeFile = (e)=>{
+    if(! this.props.imageId){
+      console.error('id not found')
+    }
+    this.updateResource.putFiles(e.target.files, {
+      id:this.props.imageId
+    }).then(()=>{
+      this.setState(state=>({...state, random: altrpRandomId()}))
+    })
 
+  }
   render() {
-    const {authorName, url, created_at, filename, media_type, height, width, filesize, mediaVariation} = this.state
-
+    const {
+      authorName,
+      url,
+      created_at,
+      filename,
+      media_type,
+      height,
+      width,
+      filesize,
+      random='',
+      updated_at= '',
+      mediaVariation
+    } = this.state
     if (!this.props.imageId) return null;
-
+    const ext = getExtension(url)
     return (
       ReactDOM.createPortal(
         <div>
@@ -82,8 +108,13 @@ export class ImageDetail extends React.Component {
             </div>
             <div className="document-detail__content">
               <div className="document-detail__display">
-                <img className="document-detail__image" width={width} height={height} src={url} draggable="false" alt=""/>
-                <button className="document-detail__btn document-detail__btn-edit-image">Edit image</button>
+                <img className="document-detail__image"
+                     width={width}
+                     height={height}
+                     src={url + `?${random}${updated_at}`} draggable="false" alt=""/>
+                <label className="document-detail__btn document-detail__btn-edit-image" >
+                  <input type="file" className="hidden" key={random} accept={`image/${ext}`} onChange={this.onChangeFile}/>
+                  Edit image</label>
               </div>
               <div className="document-detail__editing-section">
                 <Scrollbars autoHide autoHideTimeout={500} autoHideDuration={200}>

@@ -7,7 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.text('text', 'longtext').notNullable()
       table.text('translated_text', 'longtext').notNullable()
-      table.string('domain', 50).index().nullable()
+      table.string('domain', 150).index().nullable()
       table.string('iso_lang', 3).index().nullable()
     })
   }

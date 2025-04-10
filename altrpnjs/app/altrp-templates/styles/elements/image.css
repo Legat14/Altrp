@@ -31,8 +31,8 @@
 }
 .altrp-image-placeholder::before {
    display: block;
-   content: '';
+   content: "";
    width: 100%;
    padding-top: 75%;
- }
+}
 

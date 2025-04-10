@@ -48,7 +48,6 @@ import MapperNode from "App/Customizer/Nodes/MapperNode";
 import ValidatorNode from "App/Customizer/Nodes/ValidatorNode";
 import EmailTemplateNode from "App/Customizer/Nodes/EmailTemplateNode";
 import EventNode from "App/Customizer/Nodes/EventNode";
-import clearValue from "../../helpers/cache/clearValue";
 import fs from "fs";
 import path from "path";
 import ListenerGenerator from "App/Generators/ListenerGenerator";
@@ -139,6 +138,7 @@ export default class Customizer extends BaseModel {
     pivotRelatedForeignKey: 'category_guid',
   })
   public categories: ManyToMany<typeof Category>
+  private static listenerOnUpdate:boolean = false;
 
   @beforeDelete()
   public static async beforeDelete(customizer: Customizer) {
@@ -658,7 +658,7 @@ export default class Customizer extends BaseModel {
 
 
     let listenerImports = await  getValue(Customizer.listener_imports)
-    if(! listenerImports){
+    if(! listenerImports ){
       await Customizer.updateCustomEventListeners()
       listenerImports = await  getValue(Customizer.listener_imports)
     }
@@ -667,11 +667,20 @@ export default class Customizer extends BaseModel {
         const instance = new listenerClass
         await instance.run(eventName, data)
       }
+    } else {
+      // Customizer.updateCustomEventListeners().catch(e=>{
+      //   console.error(e)
+      // })
     }
     if(_.isArray(listenerImports[eventName])){
       for(const listenerClass of listenerImports[eventName]){
         const instance = new listenerClass
-        data = (await instance.run(eventName, data)) || data
+        try {
+          data = (await instance.run(eventName, data)) || data
+
+        }catch (e) {
+          console.error(`Custom Listener ${listenerClass.name} Error`, e)
+        }
       }
     }
     return data
@@ -679,9 +688,12 @@ export default class Customizer extends BaseModel {
 
 
   public static async updateCustomEventListeners(){
+    if(Customizer.listenerOnUpdate){
+      return
+    }
+    Customizer.listenerOnUpdate = false
     const listeners = await  Customizer.query().where('type', 'listener')
 
-    await clearValue(Customizer.listener_imports)
     const listenerImports = {}
 
     for(const l of listeners){
@@ -705,6 +717,7 @@ export default class Customizer extends BaseModel {
     }
     await setValue(Customizer.listener_imports, listenerImports)
     console.log('Customizer Updates Custom Event Listeners!!!')
+    Customizer.listenerOnUpdate = false
   }
 
 }
@@ -716,6 +729,7 @@ type CustomizerSettings = {
   period_unit?: string;
   period?: string | number;
   infinity?: Boolean;
+  external?: Boolean;
   repeat_count?: string | number;
   next_run?: DateTime;
   last_run?: DateTime;

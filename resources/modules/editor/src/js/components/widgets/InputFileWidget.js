@@ -339,6 +339,9 @@ class InputFileWidget extends Component {
     this.setState(state => ({...state, files}))
     const limit = this.props.element.getResponsiveLockedSetting('limit');
     let value;
+    let custom_url = this.props.element.getSettings('custom_url')
+    custom_url = replaceContentWithData(custom_url, this.props.element.getCardModel()?.getData() || {})
+
     if (this.props.element.getResponsiveLockedSetting('multiple')) {
       value = _.map(files, (file, idx) => {
         return new AltrpFile(file)
@@ -348,7 +351,8 @@ class InputFileWidget extends Component {
       }
       this.setState(state => ({...state, filesStorage: value}))
       try {
-        value = await Promise.all(value.map(async file => ((await file.storeFile()).getProperty('media.id'))))
+        value = await Promise.all(value.map(async file => ((await file.storeFile(custom_url))
+          .getProperty('media.id'))))
       } catch (e) {
         console.error(e);
       }
@@ -356,7 +360,7 @@ class InputFileWidget extends Component {
       value = new AltrpFile(files[0])
       this.setState(state => ({...state, filesStorage: [value]}))
       try {
-        value = (await value.storeFile()).getProperty('media.id')
+        value = (await value.storeFile(custom_url)).getProperty('media.id')
       } catch (e) {
         console.error(e);
       }

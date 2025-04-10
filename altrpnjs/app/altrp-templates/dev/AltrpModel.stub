@@ -31,6 +31,7 @@ export default class {{{classname}}} extends AltrpBaseModel {
 
   @Orm.beforeUpdate()
     public static async beforeUpdate(model) {
+        model.__oldValue = {...model.$original}
         await Event.emit("altrp_event",{type: "altrp_models.{{{classname}}}.beforeUpdate", data: model})
       }
 

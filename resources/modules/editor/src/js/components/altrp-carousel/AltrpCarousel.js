@@ -3,6 +3,7 @@ import Slider from "react-slick";
 import AltrpLightbox from "../altrp-lightbox/AltrpLightbox";
 
 import ArrowIcon from "../../../svgs/arrow.svg"
+
 import ("slick-carousel/slick/slick.scss");
 import ("slick-carousel/slick/slick-theme.scss");
 import ('./altrp-carousel.scss');
@@ -26,7 +27,7 @@ class AltrpCarousel extends Component {
     const cards_on = getResponsiveSetting(props, 'cards_on');
     const slides_item_source = getResponsiveSetting(props, 'slides_item_source');
     let slidesMap = []
-    if(cards_on && slides_item_source === 'path' && card && isEditor()){
+    if (cards_on && slides_item_source === 'path' && card && isEditor()) {
       slidesMap = generateSlidesForTemplatePreview(card)
     }
 
@@ -41,7 +42,7 @@ class AltrpCarousel extends Component {
   }
 
   componentDidMount() {
-    let slides_repeater = getResponsiveSetting(this.props,'slides_repeater', '', []) ;
+    let slides_repeater = getResponsiveSetting(this.props, 'slides_repeater', '', []);
     slides_repeater.forEach(image => {
       this.setState((state) => {
 
@@ -57,11 +58,11 @@ class AltrpCarousel extends Component {
   componentDidUpdate(prevProps) {
 
     const card = getResponsiveSetting(this.props, 'card')
-    if( this.state.card !== card){
+    if (this.state.card !== card) {
       const cards_on = getResponsiveSetting(this.props, 'cards_on')
       const slides_item_source = getResponsiveSetting(this.props, 'slides_item_source')
       let slidesMap = this.state.slidesMap
-      if(cards_on && slides_item_source === 'path' && card && isEditor()){
+      if (cards_on && slides_item_source === 'path' && card && isEditor()) {
         slidesMap = generateSlidesForTemplatePreview(card)
       }
 
@@ -71,9 +72,9 @@ class AltrpCarousel extends Component {
         card
       }))
     }
-    let slides_repeater = getResponsiveSetting(this.props,'slides_repeater', '', []) ;
-    if(slides_repeater !== prevProps.slides_repeater
-        && getResponsiveSetting(this.props, 'slides_item_source', '', 'custom') !== 'custom') {
+    let slides_repeater = getResponsiveSetting(this.props, 'slides_repeater', '', []);
+    if (slides_repeater !== prevProps.slides_repeater
+      && getResponsiveSetting(this.props, 'slides_item_source', '', 'custom') !== 'custom') {
       let sliderImagesArray = [];
       slides_repeater.forEach(image => {
         let img = {...image.image_slides_repeater} || {};
@@ -82,90 +83,96 @@ class AltrpCarousel extends Component {
       });
       this.setState((state) => ({...state, sliderImages: sliderImagesArray}));
     }
-    if(getResponsiveSetting(this.props, 'slides_item_source', '', 'custom') === 'path'){
+    if (getResponsiveSetting(this.props, 'slides_item_source', '', 'custom') === 'path') {
 
       let sliderImages = getDataByPath(getResponsiveSetting(this.props, 'slides_path'));
-      if(! _.isArray(sliderImages) && _.isObject(sliderImages)){
+      if (!_.isArray(sliderImages) && _.isObject(sliderImages)) {
         sliderImages = [sliderImages];
-      } else if(! _.isArray(sliderImages)){
+      } else if (!_.isArray(sliderImages)) {
         sliderImages = [];
       }
       sliderImages = sliderImages.map(item => _.get(item, 'media.url') ? _.get(item, 'media.url') : item.url);
-      if(!_.isEqual(sliderImages, this.state.sliderImages)){
+      if (!_.isEqual(sliderImages, this.state.sliderImages)) {
         this.setState((state) => ({...state, sliderImages}));
       }
     }
     let {synchronized_id} = this.props;
 
-    if(synchronized_id){
+    if (synchronized_id) {
       synchronized_id = synchronized_id.split(',');
-      synchronized_id.forEach(id=>{
+      synchronized_id.forEach(id => {
         let anotherSlider = getComponentByElementId(id);
-        if(anotherSlider){
+        if (anotherSlider) {
           this.pushSliderToSynchronize(anotherSlider);
         }
       });
     }
   }
-  wrapperClick = (e)=>{
-    if(isEditor()){
+
+  wrapperClick = (e) => {
+    if (isEditor()) {
       return
     }
-    if(! _.isArray(this.carouselsToSynchronize)){
+    if (!_.isArray(this.carouselsToSynchronize)) {
       return;
     }
     let maxView = Number(this.props.elementSettings.getResponsiveLockedSetting('per_view_slides_content')) || 1;
     const trackDiv = e.target.closest('.slick-track')
-    if(! trackDiv){
+    if (!trackDiv) {
       return;
     }
     const slidesLength = trackDiv.querySelectorAll('.slick-slide').length
-    if(maxView < slidesLength){
+    if (maxView < slidesLength) {
       return
     }
 
     let slideIndex = e.target.closest('.slick-slide')
-    if(! slideIndex){
+    if (!slideIndex) {
       return;
     }
     slideIndex = Number(slideIndex.getAttribute('data-index'))
 
-    if(_.isNaN(slideIndex)){
+    if (_.isNaN(slideIndex)) {
       return
     }
     e.preventDefault()
     e.stopPropagation()
-    this.carouselsToSynchronize.forEach(carousel => {carousel.setSlide(slideIndex)})
+    this.carouselsToSynchronize.forEach(carousel => {
+      carousel.setSlide(slideIndex)
+    })
 
   }
+
   /**
    * Добавляем компонент слайдера к синхронизируемым
    */
-  pushSliderToSynchronize(carousel){
-    if(_.isArray(carousel)){
+  pushSliderToSynchronize(carousel) {
+    if (_.isArray(carousel)) {
       this.carouselsToSynchronize = [...carousel];
-      this.carouselsToSynchronize = this.carouselsToSynchronize.filter(carousel=> carousel !== this);
+      this.carouselsToSynchronize = this.carouselsToSynchronize.filter(carousel => carousel !== this);
       return;
     }
     const carouselsToSynchronize = this.carouselsToSynchronize || [];
 
     carousel = _.get(carousel, 'elementRef.current.carousel.current');
 
-    if(carousel && carouselsToSynchronize.indexOf(carousel) === -1){
+    if (carousel && carouselsToSynchronize.indexOf(carousel) === -1) {
       carouselsToSynchronize.push(carousel);
       carouselsToSynchronize.push(this);
-      carouselsToSynchronize.forEach(carousel=>{
+      carouselsToSynchronize.forEach(carousel => {
         carousel.pushSliderToSynchronize(carouselsToSynchronize);
       });
     }
   }
+
   /**
    *
    * @param {int} index
    */
-  setSlide(index){
+  setSlide(index) {
     this.slider.slickGoTo(index)
   }
+
   next() {
     this.slider.slickNext();
   }
@@ -174,7 +181,7 @@ class AltrpCarousel extends Component {
     this.slider.slickPrev();
   }
 
-  render(){
+  render() {
     let classes = this.props.classes
     let carouselContainerClasses = `${classes} altrp-carousel-container`;
     const itemsSourceType = getResponsiveSetting(this.props, 'slides_item_source', '', 'custom');
@@ -182,7 +189,7 @@ class AltrpCarousel extends Component {
     carouselContainerClasses += (!this.props.arrows_navigation_content ? " altrp-carousel-container-no-arrow" : "");
 
     //точки
-    let slides = getResponsiveSetting(this.props,'slides_repeater', '', []) ;
+    let slides = getResponsiveSetting(this.props, 'slides_repeater', '', []);
 
     if (slides.length === 0 && itemsSourceType !== 'path') {
       if (isEditor()) {
@@ -201,11 +208,11 @@ class AltrpCarousel extends Component {
     let dotsClasses = `${classes} altrp-carousel-dots`;
 
     let sliderClasses = `${classes} altrp-carousel-slides`;
-    let dots_navigation_content = getResponsiveSetting(this.props,'dots_navigation_content') ;
-    let dots_position_navigation_content = getResponsiveSetting(this.props,'dots_position_navigation_content') ;
+    let dots_navigation_content = getResponsiveSetting(this.props, 'dots_navigation_content');
+    let dots_position_navigation_content = getResponsiveSetting(this.props, 'dots_position_navigation_content');
 
     //позиция точек
-    if(dots_navigation_content) {
+    if (dots_navigation_content) {
       switch (dots_position_navigation_content) {
         case "topLeft":
           dotsClasses += " altrp-carousel-dots-top-left";
@@ -239,11 +246,11 @@ class AltrpCarousel extends Component {
     let rows = Number(this.props.elementSettings.getResponsiveLockedSetting('per_row_slides_content')) || 1;
     let vertical = this.props.elementSettings.getResponsiveLockedSetting('vertical') || false;
 
-    if(rows > 1) {
+    if (rows > 1) {
       maxView = maxView * rows
     }
 
-    if(maxView >= slides.length) {
+    if (maxView >= slides.length) {
       infinite = false
     }
 
@@ -254,7 +261,7 @@ class AltrpCarousel extends Component {
     const cards_on = getResponsiveSetting(this.props, 'cards_on')
     const slides_item_source = getResponsiveSetting(this.props, 'slides_item_source')
     let card
-    if(cards_on){
+    if (cards_on) {
       card = getResponsiveSetting(this.props, 'card')
     }
 
@@ -263,14 +270,15 @@ class AltrpCarousel extends Component {
       arrows: false,
       customPaging: (idx) => {
         let active = false;
-        if(this.slider){
+        if (this.slider) {
           active = this.slider.innerSlider.state.currentSlide === idx;
         }
         return (
-            <a>
-              <div className={`${classes} altrp-carousel-paging ` + (active ? 'active' : '')}/>
-            </a>
-        )},
+          <a>
+            <div className={`${classes} altrp-carousel-paging ` + (active ? 'active' : '')}/>
+          </a>
+        )
+      },
       dotsClass: dotsClasses,
       dots: dots_navigation_content,
       infinite,
@@ -282,9 +290,11 @@ class AltrpCarousel extends Component {
       slidesToShow: Number(this.props.elementSettings.getResponsiveLockedSetting('per_view_slides_content')),
       slidesToScroll: Number(this.props.elementSettings.getResponsiveLockedSetting('to_scroll_slides_content')),
       rows,
-      afterChange: current => this.setState({ activeSlide: current }),
+      afterChange: current => this.setState({activeSlide: current}),
       beforeChange: (current, next) => {
-        this.carouselsToSynchronize && this.carouselsToSynchronize.forEach(carousel => {carousel.setSlide(next)})
+        this.carouselsToSynchronize && this.carouselsToSynchronize.forEach(carousel => {
+          carousel.setSlide(next)
+        })
       },
       // adaptiveHeight: false,
     };
@@ -293,8 +303,8 @@ class AltrpCarousel extends Component {
 
     // слайды
     let slidesMap;
-    switch(itemsSourceType){
-      case 'custom':{
+    switch (itemsSourceType) {
+      case 'custom': {
         slidesMap = slides.map((slide, idx) => {
           const typeSlide = slide.switch_slides_repeater || false;
           let media = slide.image_slides_repeater ? {...slide.image_slides_repeater} : {};
@@ -302,67 +312,74 @@ class AltrpCarousel extends Component {
           media.url = media.url || '/img/nullImage.png';
           media.name = media.name || 'null';
           media.assetType = media.assetType || 'mediaBackground';
-          if(media.assetType === 'media') {
+          if (media.assetType === 'media') {
             media.assetType = 'mediaBackground';
           }
-          if(getResponsiveSetting(this.props, 'img_content')){
+          if (getResponsiveSetting(this.props, 'img_content')) {
             media.assetType = 'image';
           }
           let content = renderAsset(media, {
             className: `${classes} altrp-carousel-slide-img`,
           });
 
-           if(typeSlide === true ) {
+          if (typeSlide === true) {
             content = <TemplateLoader
               onLoad={() => {
-                this.setState({ updateToken: Math.random() })
+                this.setState({updateToken: Math.random()})
               }}
               templateId={slide.card_slides_repeater}
             />
           }
+          const {custom_url_slides_repeater} = slide
+          let WrapperTag = 'div'
+          const wrapperProps = {}
+          if(custom_url_slides_repeater?.url){
+            WrapperTag = 'a'
+            wrapperProps.href = custom_url_slides_repeater?.url
+          }
 
-          return (
-              <div className={`${classes} altrp-carousel-slide`} key={slide.id}
-                   onClick={()=>{
-                     this.slider.slickGoTo(slide.id);
-                     if(lightbox_slides_content && getResponsiveSetting(this.props, 'lightbox_s_click')) {
-                       this.setState((state) => ({
-                         ...state,
-                         activeSlide: slide.id,
-                         openLightBox: true
-                       }))
-                     }
-                   }}
-                   onDoubleClick={ () => {
-                     this.slider.slickGoTo(slide.id);
-                     if(lightbox_slides_content) {
-                       this.setState((state) => ({
-                         ...state,
-                         activeSlide: slide.id,
-                         openLightBox: true
-                       }))
-                     }
-                   }}
-              >
-                {
-                  content
-                }
-                {
-                  overlay_select_heading_additional_content === "text" ? (
-                      <div className={`${classes} altrp-carousel-slide-overlay`}>
-                        <p className={`${classes} altrp-carousel-slide-overlay-text`}>{slide.overlay_text_repeater}</p>
-                      </div>
-                  ) : null
-                }
-              </div>
+            return (<WrapperTag {...wrapperProps} className={`${classes} altrp-carousel-slide`} key={slide.id}
+                 onClick={() => {
+                   this.slider.slickGoTo(slide.id);
+                   if (lightbox_slides_content && getResponsiveSetting(this.props, 'lightbox_s_click')) {
+                     this.setState((state) => ({
+                       ...state,
+                       activeSlide: slide.id,
+                       openLightBox: true
+                     }))
+                   }
+                 }}
+                 onDoubleClick={() => {
+                   this.slider.slickGoTo(slide.id);
+                   if (lightbox_slides_content) {
+                     this.setState((state) => ({
+                       ...state,
+                       activeSlide: slide.id,
+                       openLightBox: true
+                     }))
+                   }
+                 }}
+            >
+              {
+                content
+              }
+              {
+                overlay_select_heading_additional_content === "text" ? (
+                  <div className={`${classes} altrp-carousel-slide-overlay`}>
+                    <p className={`${classes} altrp-carousel-slide-overlay-text`}>{slide.overlay_text_repeater}</p>
+                  </div>
+                ) : null
+              }
+            </WrapperTag>
           );
         });
-      }break;
-      case 'path':{
+      }
+        break;
+      case 'path': {
 
-        if(isEditor()){
+        if (isEditor()) {
 
-          if(cards_on && slides_item_source === 'path' && card){
+          if (cards_on && slides_item_source === 'path' && card) {
             slidesMap = this.state.slidesMap
 
           } else {
@@ -437,16 +454,16 @@ class AltrpCarousel extends Component {
           }
         } else {
           slidesMap = getDataByPath(getResponsiveSetting(this.props, 'slides_path'));
-          if(! _.isArray(slidesMap) && _.isObject(slidesMap)){
+          if (!_.isArray(slidesMap) && _.isObject(slidesMap)) {
             slidesMap = [slidesMap];
-          } else if(! _.isArray(slidesMap)){
+          } else if (!_.isArray(slidesMap)) {
             slidesMap = [];
           }
 
-          slidesMap = slidesMap.map((media, idx)=>{
+          slidesMap = slidesMap.map((media, idx) => {
             let content
 
-            if(cards_on && slides_item_source === 'path' && card){
+            if (cards_on && slides_item_source === 'path' && card) {
               content = <div className={`${classes} altrp-carousel-slide`} key={6}>
                 <TemplateLoader
                   cardModel={new altrpHelpers.AltrpModel(media)}
@@ -454,14 +471,14 @@ class AltrpCarousel extends Component {
                 /></div>
             } else {
 
-              if(_.isObject(media.media)){
+              if (_.isObject(media.media)) {
                 media = media.media;
               }
 
               media.url = media.url || '/img/nullImage.png';
               media.name = media.name || 'null';
               media.assetType = media.assetType || 'mediaBackground';
-              if(media.assetType === 'media') {
+              if (media.assetType === 'media') {
                 media.assetType = 'mediaBackground';
               }
 
@@ -471,34 +488,35 @@ class AltrpCarousel extends Component {
 
             }
             return (
-                <div className={`${classes} altrp-carousel-slide`} key={idx}
-                     onClick={()=>{
-                       this.slider.slickGoTo(idx);
-                       if(lightbox_slides_content) {
-                         this.setState((state) => ({
-                           ...state,
-                           openLightBox: true
-                         }))
-                       }
-                     }}
-                     onDoubleClick={ () => {
-                       this.slider.slickGoTo(idx);
-                       if(lightbox_slides_content) {
-                         this.setState((state) => ({
-                           ...state,
-                           openLightBox: true
-                         }))
-                       }
-                     }}
-                >
-                  {
-                    content
-                  }
-                </div>
+              <div className={`${classes} altrp-carousel-slide`} key={idx}
+                   onClick={() => {
+                     this.slider.slickGoTo(idx);
+                     if (lightbox_slides_content) {
+                       this.setState((state) => ({
+                         ...state,
+                         openLightBox: true
+                       }))
+                     }
+                   }}
+                   onDoubleClick={() => {
+                     this.slider.slickGoTo(idx);
+                     if (lightbox_slides_content) {
+                       this.setState((state) => ({
+                         ...state,
+                         openLightBox: true
+                       }))
+                     }
+                   }}
+              >
+                {
+                  content
+                }
+              </div>
             );
           });
         }
-      }break;
+      }
+        break;
     }
 
     //позиция стрелок
@@ -535,10 +553,10 @@ class AltrpCarousel extends Component {
     const color_lightbox_style = getResponsiveSetting(this.props, 'color_lightbox_style')
 
     prevArrow = arrows_navigation_content ? (
-        <div className={`${classes} altrp-carousel-arrow-prev altrp-carousel-arrow`} onClick={this.previous}>
-          <ArrowIcon/>
-        </div>
-      ) : "";
+      <div className={`${classes} altrp-carousel-arrow-prev altrp-carousel-arrow`} onClick={this.previous}>
+        <ArrowIcon/>
+      </div>
+    ) : "";
 
     nextArrow = arrows_navigation_content ? (
       <div className={`${classes} altrp-carousel-arrow-next altrp-carousel-arrow`} onClick={this.next}>
@@ -547,10 +565,10 @@ class AltrpCarousel extends Component {
     ) : "";
 
     let lightbox = "";
-    if(lightbox_slides_content) {
+    if (lightbox_slides_content) {
       let imagesSrcs = this.state.sliderImages;
 
-      lightbox =  this.state.openLightBox ? (
+      lightbox = this.state.openLightBox ? (
         <AltrpLightbox
           images={imagesSrcs}
           current={this.state.activeSlide}
@@ -571,7 +589,7 @@ class AltrpCarousel extends Component {
       {
         lightbox_slides_content ? lightbox : ""
       }
-      { arrows_position_navigation_content === "center" ?
+      {arrows_position_navigation_content === "center" ?
         prevArrow
         : ""
       }
@@ -591,14 +609,14 @@ class AltrpCarousel extends Component {
           }
         </Slider>
       </div>
-      { arrows_position_navigation_content === "center" ? nextArrow : "" }
+      {arrows_position_navigation_content === "center" ? nextArrow : ""}
     </AltrpCarouselWrapper>
   }
 }
 
 export default AltrpCarousel
 
-function generateSlidesForTemplatePreview(card){
+function generateSlidesForTemplatePreview(card) {
   return [
     (
       <div className={`altrp-carousel-slide`} key={1}>

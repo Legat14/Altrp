@@ -918,29 +918,30 @@ export default class Model extends BaseModel {
           COMMENT ON TABLE "${this.table.name}" IS '';
           ALTER TABLE "${this.table.name}" ADD CONSTRAINT "${this.table.name}_uuid" UNIQUE ("uuid");
           `)
-        } else {
-          await schema.raw(`
-            ALTER TABLE \`${this.table.name}\` ADD \`uuid\` VARCHAR(36) NOT NULL AFTER \`id\`;
-            ALTER TABLE \`${this.table.name}\` ADD UNIQUE(\`uuid\`);
-            CREATE TRIGGER before_insert_${this.table.name}
-              BEFORE INSERT ON ${this.table.name}
-              FOR EACH ROW
-              SET new.uuid = uuid();
 
-          `)
+          await Column.create({
+            description: 'uuid',
+            title: 'UUID',
+            default: 'uuid',
+            name: 'uuid',
+            table_id: this.table_id,
+            model_id: this.id,
+            type: 'uuid',
+            unique: true,
+            indexed: true,
+          })
+        } else {
+          // await schema.raw(`
+          //   ALTER TABLE \`${this.table.name}\` ADD \`uuid\` VARCHAR(36) NOT NULL AFTER \`id\`;
+          //   ALTER TABLE \`${this.table.name}\` ADD UNIQUE(\`uuid\`);
+          //   CREATE TRIGGER before_insert_${this.table.name}
+          //     BEFORE INSERT ON ${this.table.name}
+          //     FOR EACH ROW
+          //     SET new.uuid = uuid();
+          //
+          // `)
         }
 
-        await Column.create({
-          description: 'uuid',
-          title: 'UUID',
-          default: 'uuid',
-          name: 'uuid',
-          table_id: this.table_id,
-          model_id: this.id,
-          type: 'uuid',
-          unique: true,
-          indexed: true,
-        })
       } else {
         if (connection === 'pg'){
 

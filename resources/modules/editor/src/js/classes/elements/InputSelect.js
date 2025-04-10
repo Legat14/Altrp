@@ -312,9 +312,9 @@ class InputSelect extends BaseElement {
 
     this.endControlSection();
 
-    actionsControllers(this, "Click Actions", "click_");
-
     actionsControllers(this, "Change Actions", "change_");
+
+    actionsControllers(this, "Click Actions", "click_");
 
     actionsControllers(this, "On Search Actions", "s_");
 

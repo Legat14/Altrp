@@ -608,7 +608,7 @@ class Assets extends Component {
                          )
                        }
                       </div>
-                   )} 
+                   )}
                  </div>
                )}
                 <div>
@@ -731,7 +731,8 @@ class Assets extends Component {
          </div>
       </div>
       <div>
-        <ImageDetail getAuthorList={this.getAuthorList} havePreviousImage={this.state.havePreviousImage} haveNextImage={this.state.haveNextImage} updateAsset={this.updateAsset} getAsset={this.getAsset} deleteAsset={this.deleteAsset} imageId={this.state.imageId} closeImageDetail={this.closeImageDetail} nextImageDetail={this.nextImageDetail} prevImageDetail={this.prevImageDetail} />
+        <ImageDetail getAuthorList={this.getAuthorList} havePreviousImage={this.state.havePreviousImage} haveNextImage={this.state.haveNextImage}
+                     updateAsset={this.updateAsset} getAsset={this.getAsset} deleteAsset={this.deleteAsset} imageId={this.state.imageId} closeImageDetail={this.closeImageDetail} nextImageDetail={this.nextImageDetail} prevImageDetail={this.prevImageDetail} />
         <FontsDetail nextFontDetail={this.nextFontDetail} prevFontDetail={this.prevFontDetail} closeFontDetail={this.closeFontDetail} getAuthorList={this.getAuthorList} getAsset={this.getAsset} fontId={this.state.fontId} deleteAsset={this.deleteAsset} />
       </div>
     </div>;

@@ -43,7 +43,9 @@ class IconWidget extends Component {
 
   render() {
     let titleText = this.state.settings.title_text === undefined ? 'Title' : this.state.settings.title_text
+
     titleText = replaceContentWithData(titleText)
+    let description = replaceContentWithData(this.state.settings.description)
     const classes = this.getClasses() + (this.state.settings.position_css_classes || "")
     const fontawesomeIcon = this.state.settings.fontawesomeIcon
 
@@ -65,7 +67,7 @@ class IconWidget extends Component {
           } )}
           {/*<div className={`${classes} description`}>{this.state.settings.description === undefined ? 'Icon description' : this.state.settings.description}</div>*/}
           <div className={`${classes} description`} dangerouslySetInnerHTML={
-            {__html: this.state.settings.description}
+            {__html: description}
           }
           />
         </div>

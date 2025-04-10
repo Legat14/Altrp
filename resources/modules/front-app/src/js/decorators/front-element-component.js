@@ -119,7 +119,7 @@ function getContent(settingName, returnRaw = false, locked = false) {
         _.isString(content) && (content = content.replace(/NaN/g, ''));
         return content || '';
       } catch(e){
-        console.error('Evaluate error in getContent for input default value' + e.message);
+        console.error('Evaluate error in getContent for input default value' + e.message, content);
         return '';
       } finally {
       }

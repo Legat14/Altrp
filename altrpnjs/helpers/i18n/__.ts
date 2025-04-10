@@ -15,21 +15,19 @@ export default async function __(text: string, options: OptionsType | null):Prom
   })
   options = options || {}
   const {
-    domain = '',
+    domain = null,
     data,
     lang = defaultLang,
     force =false,
   } = options
   let translatedText = get(__cache, `${domain}.${text}.${lang}`)
   if( ! translatedText || ! force){
-    if(domain){
-      query.where('domain', domain)
-    }
+    domain ? query.where('domain', domain) : query.whereNull('domain')
+
     if(lang){
       query.where('iso_lang', lang)
     }
-    const i18 = await query.first()
-    translatedText = i18 ? i18.translated_text: text
+    let i18 = await query.first()
     if(!i18){
       const newI18n = await I18n.create({text, translated_text:text})
 
@@ -40,7 +38,9 @@ export default async function __(text: string, options: OptionsType | null):Prom
         newI18n.iso_lang=lang
       }
       await newI18n.save()
+      i18 = newI18n
     }
+    translatedText = i18 ? i18.translated_text: text
     i18 && (set(__cache, `${domain}.${text}.${lang}`, translatedText))
   }
   if(data){

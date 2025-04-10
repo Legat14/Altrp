@@ -44,7 +44,6 @@ function loadEditorContent(EditorContent){
   let editorContentTarget = iframe.contentDocument.getElementById(
     "editor-content"
   );
-  console.log(iframe.contentDocument.readyState);
 
   if (editorContentTarget) {
     ReactDOM.render(<EditorContent />, editorContentTarget);

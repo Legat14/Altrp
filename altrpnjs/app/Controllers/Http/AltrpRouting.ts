@@ -59,6 +59,15 @@ export default class AltrpRouting {
 
     var ext = url.split('.').pop();
 
+    const qs = httpContext.request.qs()
+    let lang
+    if(qs.lang){
+      lang = qs.lang
+      const expires = new Date()
+      expires.setFullYear(expires.getFullYear() + 1)
+      httpContext.response.cookie('altrp_lang', lang, {expires})
+    }
+
     if (url.includes('/storage/media/') && ['jpg', 'jpeg', 'webp', 'png', ].includes(ext)) {
 
       let searchFilename = base_path('/public'+url);
@@ -318,9 +327,21 @@ export default class AltrpRouting {
         }
 
         await page.load('model');
+      } else {
+        //const start = performance.now();
+        const filterData =  await callCustomEvent(`page_model_filter_${page.guid}`,{
+          httpContext,
+          model_data,
+          page,
+        })
+        //console.log(`page_model_filter_:   ${((performance.now() - start) + '').substring(0, 8)}`)
+
+          model_data = filterData.model_data || {}
       }
 
     }
+
+
 
 
     // const datasources= {}
@@ -345,7 +366,7 @@ export default class AltrpRouting {
     }
     const datasources = await Source.fetchDatasourcesForPage(page.id, httpContext, altrpContext)
     const device = getCurrentDevice(httpContext.request)
-    const lang = httpContext.request.cookie('altrp_lang') || get_altrp_setting('site_language', 'en')
+    lang = lang || httpContext.request.cookie('altrp_lang') || get_altrp_setting('site_language', 'en')
     const theme = httpContext.request.cookie('altrp_theme')
     const dark_default =get_altrp_setting('dark_default')
     const direction = getDirection(lang)

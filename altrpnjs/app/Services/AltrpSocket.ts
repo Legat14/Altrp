@@ -4,6 +4,7 @@ import User from "App/Models/User";
 import Role from "App/Models/Role";
 import _ from "lodash";
 import env from "../../helpers/env";
+import Application from "@ioc:Adonis/Core/Application";
 
 
 class AltrpSocket {
@@ -16,6 +17,9 @@ class AltrpSocket {
   public boot() {
 
     if(env('CLUSTER') == 'true'){
+      return;
+    }
+    if(Application.environment !== 'web'){
       return;
     }
     if (this.booted) {

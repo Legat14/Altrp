@@ -1,7 +1,8 @@
 import {useEffect, useRef, useState} from "react";
+import replaceContentWithData from '../../../../../../front-app/src/js/functions/replaceContentWithData';
 
 
-function AccordionItem({idArray, idx, open, item, title_html_tag_accordion_content, icon, activeIcon, activeMode}) {
+function AccordionItem({idArray, idx, open, item, title_html_tag_accordion_content, icon, activeIcon, activeMode, data}) {
 
   const [accordionHeight, setAccordionHeight] = useState("0px")
   const content = useRef(null)
@@ -19,7 +20,14 @@ function AccordionItem({idArray, idx, open, item, title_html_tag_accordion_conte
     }
   }, [activeMode])
 
-
+  let title_repeater = item.title_repeater || ''
+  if(title_repeater){
+    title_repeater = replaceContentWithData(title_repeater, data)
+  }
+  let wysiwyg_repeater = item.wysiwyg_repeater || ''
+  if(wysiwyg_repeater){
+    wysiwyg_repeater = replaceContentWithData(wysiwyg_repeater, data)
+  }
   return (
 
     <div className={"altrp-accordion-item" + (idArray[idx] ? ' active' : '')}>
@@ -32,7 +40,7 @@ function AccordionItem({idArray, idx, open, item, title_html_tag_accordion_conte
               {
                 className: "altrp-accordion-item-label"
               },
-              [item.title_repeater]
+              [title_repeater]
             )
           }
         </div>
@@ -44,7 +52,7 @@ function AccordionItem({idArray, idx, open, item, title_html_tag_accordion_conte
       {/*content*/}
       <div ref={content} style={{maxHeight: `${accordionHeight}`}} className="altrp-accordion-item-content"
            data-item={idx}>
-        <div className="altrp-accordion-item-content-text" dangerouslySetInnerHTML={{__html: item.wysiwyg_repeater}}/>
+        <div className="altrp-accordion-item-content-text" dangerouslySetInnerHTML={{__html: wysiwyg_repeater}}/>
       </div>
     </div>
 

@@ -10,6 +10,9 @@ export default  class DispatchCustomizerEvent {
     next: () => Promise<void>,
   ) {
 
+    /**
+     * Call Customizer event
+     */
     Customizer.callCustomEvents('altrp_request', {
       httpContext
     }).catch(e=>{

@@ -8,9 +8,12 @@
 | preferred, since they keep this file clean.
 |
 */
+import Application from "@ioc:Adonis/Core/Application";
+
 declare global {
   const __;
   let globalCache:any;
+  let callCustomEvent:Function;
 }
 
 
@@ -20,6 +23,7 @@ import './view'
 import "../app/Services/TelegramBot"
 import "../app/Services/DiscordBot"
 import __ from "../helpers/i18n/__";
+import _ from "lodash";
 
 /*
 |--------------------------------------------------------------------------
@@ -33,32 +37,18 @@ import __ from "../helpers/i18n/__";
 // @ts-ignore
 global.__ = __;
 // @ts-ignore
+global._ = _;
+// @ts-ignore
 global.callCustomEvent = (require("../app/Models/Customizer").default).callCustomEvents;
 // @ts-ignore
 global.globalCache = {};
+if(Application.environment === 'web') {
 // @ts-ignore
-global.callCustomEvent('altrp_start').catch(e=>{
-  console.error('Error while `altrp_start` custom event', e)
-})
-process.on('exit', (code) => {
-  global.callCustomEvent('altrp_exit', {
-    code
-  }).catch(e=>{
-    console.error('Error while `altrp_exit` custom event', e)
+  global.callCustomEvent('altrp_start').catch(e=>{
+    console.error('Error while `altrp_start` custom event', e)
   })
-});
-process.on('uncaughtException', async (error) => {
-  console.error(error)
-  try {
-    await global.callCustomEvent('altrp_uncaught_exception', {
-      error,
-    })
-  }catch (e) {
-    console.error('Error while `altrp_uncaught_exception` custom event', e)
+}
 
-  }
-  process.exit(1);
-});
 Server.middleware.register([
   () => import('@ioc:Adonis/Core/BodyParser'),
   () => import('App/Middleware/SilentAuth'),

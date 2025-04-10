@@ -357,6 +357,8 @@ class ElementWrapper extends Component {
     }
     element = this.element
     if(nextProps.currentScreen !== this.props.currentScreen) return true;
+    // console.log(element)
+    // console.log(getCurrentElement())
     while(element){
       needUpdate = element === getCurrentElement()
 

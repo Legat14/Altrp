@@ -551,7 +551,10 @@ export default class TemplatesController {
   }
 
   public async getReviews({ params, response }) {
-    const templates = await Template.query().where("type", "review").andWhere("parent_template", parseInt(params.id))
+    const templates = await Template.query().where("type", "review")
+      .andWhere("parent_template", parseInt(params.id))
+      .orderBy('id', 'desc')
+      .offset(1)
 
     if(templates.length > 0) {
       return templates

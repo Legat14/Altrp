@@ -100,7 +100,6 @@ class EditorContent extends Component {
     contextMenu.hideAll();
   }
   render() {
-
     return <Provider store={store}>
       <StyleSheetManager target={EditorFrame.contentWindow.document.getElementsByTagName(
           "head"
@@ -114,6 +113,7 @@ class EditorContent extends Component {
                 {
                   this.state.rootElement ? React.createElement(
                     this.state.rootElement.componentClass,{
+                      key: this.state.rootElement.getId(),
                       children: this.state.rootElement.children,
                       element:this.state.rootElement,
                     }

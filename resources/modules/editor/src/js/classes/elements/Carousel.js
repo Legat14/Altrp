@@ -95,25 +95,25 @@ class Carousel extends BaseElement {
       nullable: true,
     });
 
-    repeater.addControl('link_to_slides_repeater', {
-      type: CONTROLLER_SELECT,
-      label: 'Link to',
-      default: 'none',
-      options: [
-        {
-          value: 'none',
-          label: 'none'
-        },
-        {
-          value: 'mediaFile',
-          label: 'media file'
-        },
-        {
-          value: 'customURL',
-          label: 'custom URL'
-        },
-      ]
-    });
+    // repeater.addControl('link_to_slides_repeater', {
+    //   type: CONTROLLER_SELECT,
+    //   label: 'Link to',
+    //   default: 'none',
+    //   options: [
+    //     {
+    //       value: 'none',
+    //       label: 'none'
+    //     },
+    //     {
+    //       value: 'mediaFile',
+    //       label: 'media file'
+    //     },
+    //     {
+    //       value: 'customURL',
+    //       label: 'custom URL'
+    //     },
+    //   ]
+    // });
 
     repeater.addControl('custom_url_slides_repeater', {
       type: CONTROLLER_LINK,
@@ -178,7 +178,6 @@ class Carousel extends BaseElement {
       conditions: {
         'slides_item_source': 'path',
       },
-      responsive: false,
       locked: true,
     });
 

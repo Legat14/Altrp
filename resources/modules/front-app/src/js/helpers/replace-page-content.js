@@ -91,10 +91,13 @@ export default function replacePageContent(url, popstate = false) {
 
         console.log('async Page End: ', performance.now());
 
-        const event = new Event('altrp-navigate')
+        let event = new Event('altrp-navigate')
         document.dispatchEvent(event)
         window.dispatchEvent(event)
         appStore.dispatch(clearPageState())
+        event = new Event('altrp-navigated')
+        document.dispatchEvent(event)
+        window.dispatchEvent(event)
       } catch (e) {
         console.error(e);
         location.href = url
@@ -132,6 +135,8 @@ async function _replace(htmlString, popstate, url, progressBar) {
   htmlString = htmlString.replace(/<!([\s\S]+?)>/, '')
   const newHtml = document.createElement('html')
   newHtml.innerHTML = htmlString
+
+
 
   /**
    * parsing areas
@@ -429,7 +434,8 @@ async function _replace(htmlString, popstate, url, progressBar) {
 
 function _unmountReact(element){
   window.popupsContainer && ReactDOM.unmountComponentAtNode(window.popupsContainer)
-  element.querySelectorAll('[data-react-element]:not([data-altrp-mounted])').forEach(el=>{
+  // element.querySelectorAll('[data-react-element]:not([data-altrp-mounted])').forEach(el=>{
+  element.querySelectorAll('[data-react-element]').forEach(el=>{
     try {
       ReactDOM.unmountComponentAtNode(el)
     } catch (e) {

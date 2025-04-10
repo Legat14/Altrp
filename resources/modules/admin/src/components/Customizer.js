@@ -13,6 +13,7 @@ import './../sass/components/DuplicateCustomizer.scss'
 class Customizer extends Component {
   constructor(props) {
     super(props);
+    this.categoryOptions = new Resource({route: "/admin/ajax/category/options"})
 
     this.state = {
       customizers: [],
@@ -73,6 +74,13 @@ class Customizer extends Component {
   async componentDidMount() {
     await this.fetchData();
 
+
+    let {data} = await this.categoryOptions.getAll();
+    this.setState(state => ({
+      ...state,
+      categoryOptions: data
+    }))
+
     window.addEventListener("scroll", this.listenScrollHeader)
   }
 
@@ -131,9 +139,11 @@ class Customizer extends Component {
 
   async fetchData() {
     let url = new URL(location.href);
+    let urlCategories = url.searchParams.get('categories')
     let urlS = url.searchParams.get('s')
     const customizers = (await this.resource.getQueried({
       s: urlS === null ? this.state.customizersSearch : urlS,
+      categories: urlCategories,
       page: this.state.currentPage,
       pageSize: this.itemsPerPage
     }))
@@ -145,7 +155,10 @@ class Customizer extends Component {
       });
     }
 
-    this.setState(state => ({ ...state, customizers: customizers.data, count: customizers.count, pageCount: customizers.pageCount, customizersSearch: urlS === null ? this.state.customizersSearch : urlS  }));
+    this.setState(state => ({ ...state,
+      activeCategory: urlCategories === null ? 'All' : urlCategories,
+
+      customizers: customizers.data, count: customizers.count, pageCount: customizers.pageCount, customizersSearch: urlS === null ? this.state.customizersSearch : urlS  }));
   }
 
   goToCustomizerEditor() {
@@ -226,8 +239,56 @@ class Customizer extends Component {
 
   }
 
+  getCategory = async (guid, all) => {
+    let url = new URL(location.href);
+    let urlS = url.searchParams.get('s')
+    if (guid) {
+      url.searchParams.set('categories', guid);
+      this.props.history.push(`${url.pathname + url.search}`)
+      let customizers = (await this.resource.getQueried({
+        categories: guid,
+        s: urlS === null ? this.state.customizersSearch : urlS
+      })).data || [];
+
+      if (this.props.customizersState) {
+        this.setState(state => ({
+          ...state,
+          customizers: customizers,
+          activeCategory: guid
+        }))
+      } else {
+        this.setState(state => ({
+          ...state,
+          customizers,
+          activeCategory: guid
+        }))
+      }
+    } else {
+      url.searchParams.delete('categories');
+      this.props.history.push(`${url.pathname + url.search}`)
+      let customizers = (await this.resource.getQueried({
+        s: urlS === null ? this.state.customizersSearch : urlS
+      })).data;
+      if (this.props.customizersState) {
+        this.setState(state => ({
+          ...state,
+          customizers: customizers,
+          activeCategory: all
+        }))
+      } else {
+        this.setState(state => ({
+          ...state,
+          customizers,
+          activeCategory: all
+        }))
+      }
+    }
+  }
   render() {
-    const { currentPage, customizers, customizersSearch, count, pageCount  } = this.state;
+    const { currentPage, customizers, customizersSearch, count, pageCount , categoryOptions } = this.state;
+    customizers?.forEach(item =>{
+      item.url = `/admin/customizers-editor?customizer_id=${item.id}`;
+    })
     return (
       <div className="admin-templates admin-page">
         <div className={this.state.activeHeader ? "admin-heading admin-heading-shadow" : "admin-heading"}>
@@ -265,6 +326,13 @@ class Customizer extends Component {
             <button className="btn">Import</button>
           </form>}
           <AdminTable
+
+            filterPropsCategories={{
+              DidMountArray: [],
+              categoryOptions: categoryOptions,
+              getCategories: this.getCategory,
+              activeCategory: this.state.activeCategory
+            }}
             columns={[
               {
                 name: "title",

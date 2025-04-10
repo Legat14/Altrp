@@ -70,7 +70,7 @@ class Accordion extends BaseElement {
       label: "Text",
       default: "I Am Advanced Text",
       conditions: {
-        'content_select_repeater': "template",
+        'content_select_repeater!': "template",
       },
     });
 

@@ -16,6 +16,7 @@ import Logger from "@ioc:Adonis/Core/Logger";
 import Application from "@ioc:Adonis/Core/Application";
 import LIKE from "../../../../helpers/const/LIKE";
 import transliterate  from "../../../../helpers/transliterate";
+import _ from "lodash";
 
 export default class MediaController {
   private static fileTypes: any;
@@ -185,25 +186,6 @@ export default class MediaController {
     return response.json(media);
   }
 
-  async updateMedia({ response, request }: HttpContextContract) {
-    const id = request.all().id;
-    const mediaToUpdate = await Media.find(id);
-    if (!mediaToUpdate) {
-      response.status(404);
-      return response.json({
-        success: false,
-        message: "Media not found",
-      });
-    }
-    try {
-      mediaToUpdate.merge(request.all());
-      await mediaToUpdate.save();
-    } catch (e) {
-      console.error(e);
-    }
-    return response.json(mediaToUpdate);
-  }
-
   public static getFileTypes() {
     if (!MediaController.fileTypes) {
       let fileTypes = fs.readFileSync(base_path("config/file-types.json"), {
@@ -328,6 +310,64 @@ export default class MediaController {
     res = res.reverse();
     return response.json(res);
   }
+  async updateMedia({ response, request }: HttpContextContract) {
+    const id = request.all().id;
+    const mediaToUpdate = await Media.find(id);
+    if (!mediaToUpdate) {
+      response.status(404);
+      return response.json({
+        success: false,
+        message: "Media not found",
+      });
+    }
+    try {
+      mediaToUpdate.merge(request.all(), true);
+      await mediaToUpdate.save();
+    } catch (e) {
+      console.error(e);
+    }
+    const files = request.allFiles().files || [];
+
+    if(files){
+      const file = _.get(files, '0')
+
+      if(file && file.tmpPath){
+        let content = await fs.promises.readFile(file.tmpPath)
+
+        const ext = file.clientName.split(".").pop();
+
+        if (ext == "heic") {
+          content = convert({
+            buffer: content,
+            format: "JPEG",
+            quality: 1,
+          });
+        }
+
+        if (ext === "svg") {
+          let svg = content;
+          svg = parseString(svg);
+          mediaToUpdate.width = data_get(svg, "$.width", 150);
+          mediaToUpdate.height = data_get(svg, "$.height", 150);
+        } else {
+          let dimensions;
+          try {
+            dimensions = imageSize(content);
+          } catch (e) {}
+          mediaToUpdate.width = data_get(dimensions, "width", 0);
+          mediaToUpdate.height = data_get(dimensions, "height", 0);
+        }
+        fs.writeFileSync(public_path(mediaToUpdate.url), content);
+        // const stats = fs.statSync(public_path(mediaToUpdate.url));
+        // mediaToUpdate.size = MediaController.readableSize(stats.size)
+
+          await mediaToUpdate.save()
+      }
+    }
+
+    return response.json(mediaToUpdate);
+  }
+
 
   async store_from_frontend({ response, request, auth }: HttpContextContract) {
     // @ts-ignore

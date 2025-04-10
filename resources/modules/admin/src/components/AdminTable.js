@@ -79,7 +79,7 @@ class AdminTable extends Component {
                      className={item.value === filterPropsCategories.activeCategory ? "admin-filters__link active-category" : "admin-filters__link" }
                      onClick={() => filterPropsCategories.getCategories(item.value)}
                    >
-                     {item.label} ({itemsCount})
+                     {item.label}
                    </a>
                 </span>)
             })}

@@ -174,22 +174,25 @@ class AccordionWidget extends Component {
       );
     }
     const title_html_tag_accordion_content = this.props.element.getLockedSettings('title_html_tag_accordion_content') || 'div'
-
+    const data = this.props.element.getCardModel()
     return <div className={`${classes} altrp-accordion`}>
       {
-        items.map((item, idx) => (
-          <AccordionItem
-            idArray={this.state.activeItem.id}
-            idx={idx}
-            open={(e) => this.open(e)}
-            item={item}
-            key={idx}
-            title_html_tag_accordion_content={title_html_tag_accordion_content}
-            icon={icon}
-            activeIcon={active_icon}
-            activeMode={this.state.activeItem.id[idx]}
-          />
-        ))
+        items.map((item, idx) => {
+          return(
+            <AccordionItem
+              idArray={this.state.activeItem.id}
+              idx={idx}
+              open={(e) => this.open(e)}
+              item={item}
+              key={idx}
+              data={data}
+              title_html_tag_accordion_content={title_html_tag_accordion_content}
+              icon={icon}
+              activeIcon={active_icon}
+              activeMode={this.state.activeItem.id[idx]}
+            />
+          )
+        })
       }
     </div>
   }

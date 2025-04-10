@@ -546,7 +546,7 @@ class InputAcceptWidget extends Component {
   onChange(e, editor = null) {
     let value = "";
     let valueToDispatch;
-
+    console.log(e)
     if (e && e.target) {
       let _value = e.target.checked;
       let trueValue =

@@ -12,6 +12,7 @@ import Event from "@ioc:Adonis/Core/Event";
 import LIKE from "../../../../helpers/const/LIKE";
 import base_path from '../../../../helpers/base_path'
 import Role from "App/Models/Role";
+//import {queryCache} from "react-query";
 // import SourceRole from "App/Models/SourceRole";
 
 export default class CustomizersController {
@@ -365,10 +366,10 @@ export default class CustomizersController {
 
     let search = request.qs().s || ''
     search = search.trim()
-    let categories = request.qs() || ''
     let page = request.qs().page || 1
     let pageSize = request.qs().pageSize || 20
     let orderColumn = request.qs().order_by || 'title'
+    let categories = request.qs().categories || ''
     // let limit = request.qs().pageSize || 10
     // let offset = limit * (page - 1)
     let orderType: 'asc' | 'desc' = request.qs()?.order ? request.qs().order.toLowerCase() : 'asc'
@@ -376,12 +377,19 @@ export default class CustomizersController {
     let customizers = Customizer.query().preload('categories')
     if (categories && _.isString(categories)) {
       categories = categories.split(',')
-      customizers.leftJoin('altrp_category_objects',
-        'altrp_category_objects.object_guid',
-        '=',
-        'altrp_customizers.guid')
+      // customizers.leftJoin('altrp_category_objects',
+      //   'altrp_category_objects.object_guid',
+      //   '=',
+      //   'altrp_customizers.guid')
       // @ts-ignore
-      customizers.whereIn('altrp_category_objects.category_guid', categories)
+      customizers.whereHas('categories', query=>{
+        query.whereIn('guid', categories)
+      })
+      customizers.orWhereHas('altrp_model', query =>{
+        query.whereHas('categories', query=>{
+          query.whereIn('guid', categories)
+        })
+      })
     }
 
     if (search) {

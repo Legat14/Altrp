@@ -23,9 +23,9 @@ class AltrpFile extends AltrpModel{
    *
    * @returns {Promise<AltrpFile>}
    */
-  async storeFile(){
+  async storeFile(customUrl = null){
     try {
-      let response = await AltrpFile.getResource().postFiles([this.getFile()])
+      let response = await AltrpFile.getResource(customUrl).postFiles([this.getFile()])
       this.setProperty('media', response[0])
     }catch (e) {
       console.error(e);
@@ -72,7 +72,10 @@ class AltrpFile extends AltrpModel{
    *
    * @returns {Resource}
    */
-  static getResource(){
+  static getResource(customUrl){
+    if(customUrl){
+      return new window.altrpHelpers.Resource({route: customUrl})
+    }
     if(! AltrpFile.resource){
       AltrpFile.resource = new window.altrpHelpers.Resource({route: '/ajax/media'})
     }

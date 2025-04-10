@@ -276,6 +276,53 @@ class Resource {
       return res.json();
     });
   }
+  /**
+   * @param {FileList | File[]} files
+   * @param {object|undefined} data
+   * @return {Promise}
+   * */
+  putFiles(files, data) {
+    // fileTypes = fileTypes || "image";
+
+
+    const headers = {}
+    headers['X-XSRF-TOKEN'] = getCookie('XSRF-TOKEN')
+    let formData = new FormData();
+    // fileTypes = fileTypes.split(",");
+    // fileTypes.forEach(fileType => {
+    //   if (!fileType) {
+    //     return;
+    //   }
+    //   fileType = fileType.trim();
+    //
+    // });
+    for (let i = 0; i < files.length; i++) {
+      if (
+        files[i].size > MAX_FILE_SIZE
+        // ||          files[i].type.indexOf(fileType) === -1
+      ) {
+        continue;
+      }
+      formData.append(`files[${i}]`, files[i]);
+    }
+    let options = {
+      method: "PUT",
+      body: formData,
+      headers
+    };
+    let route = this.getRoute()
+
+    if(data){
+      route+= `?${qs.stringify(data)}`
+    }
+
+      return fetch(route, options).then(res => {
+      if (res.ok === false) {
+        return Promise.reject({ res: res.text(), status: res.status });
+      }
+      return res.json();
+    });
+  }
 
   /**
    * @param {File} file

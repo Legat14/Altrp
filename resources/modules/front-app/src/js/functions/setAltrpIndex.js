@@ -16,9 +16,11 @@ export default function setAltrpIndex(array = []) {
     }
     if (item instanceof AltrpModel) {
       item.setProperty("altrpIndex", idx);
+      item.setProperty("altrpNumber", idx + 1);
       return;
     }
     item.altrpIndex = idx;
+    item.altrpNumber = idx + 1;
     item.altrpId = altrpRandomId();
   });
 }

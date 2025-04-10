@@ -123,10 +123,16 @@ class InputFile extends BaseElement {
       locked: true,
     });
 
-      this.addControl('default_value', {
+    this.addControl('default_value', {
       type: CONTROLLER_TEXTAREA,
       locked:true,
       label: 'Default Value'
+    });
+
+    this.addControl('custom_url', {
+      type: CONTROLLER_TEXTAREA,
+      locked:true,
+      label: 'Custom Url'
     });
 
     this.endControlSection();
