@@ -1,4 +1,4 @@
-import AdminBarWrapper from './AdminBarWrapper';
+import AdminBarWrapper from "./AdminBarWrapper";
 import Resource from "../../../../editor/src/js/classes/Resource";
 import upgradeBackend from "../../../../admin/src/js/functions/upgradeBackend";
 import getDataByPath from "../functions/getDataByPath";
@@ -10,7 +10,7 @@ class AdminBar extends React.Component {
       visiblePopupTemplate: false,
       visiblePopupHistory: false,
       valueInput: "",
-      contentResult: <div/>,
+      contentResult: <div />,
       visibleContentResult: false,
       visibleAutocomplete: false,
       filteredOptions: [],
@@ -24,9 +24,8 @@ class AdminBar extends React.Component {
     this.searchContentResult = React.createRef();
     this.autocomplete = React.createRef();
     this.searchInput = React.createRef();
-    this.toggleVisiblePopupTemplate = this.toggleVisiblePopupTemplate.bind(
-      this
-    );
+    this.toggleVisiblePopupTemplate =
+      this.toggleVisiblePopupTemplate.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
     this.openPageSettings = this.openPageSettings.bind(this);
@@ -42,27 +41,27 @@ class AdminBar extends React.Component {
     document.body.addEventListener("click", this.handleOutsideClick);
 
     let protocol = location.href.split("://")[0];
-    if(protocol === "https")
-      this.setState(state => ({
+    if (protocol === "https")
+      this.setState((state) => ({
         ...state,
-        isHttps: true
+        isHttps: true,
       }));
   }
 
   toggleVisiblePopupTemplate(e) {
     e.stopPropagation();
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      visiblePopupTemplate: !state.visiblePopupTemplate
+      visiblePopupTemplate: !state.visiblePopupTemplate,
     }));
   }
-  toggleVisiblePopupMenus = (e)=> {
+  toggleVisiblePopupMenus = (e) => {
     e.stopPropagation();
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      visiblePopupMenus: !state.visiblePopupMenus
+      visiblePopupMenus: !state.visiblePopupMenus,
     }));
-  }
+  };
 
   openTemplate(id) {
     return () => window.open(`/admin/editor?template_id=${id}`, "_blank");
@@ -86,14 +85,14 @@ class AdminBar extends React.Component {
       ? JSON.parse(localStorage.getItem("admin-bar-search-autocomplete"))
       : [];
     let filteredOptions = options.filter(
-      item => item.toLowerCase().indexOf(value.toLowerCase()) > -1
+      (item) => item.toLowerCase().indexOf(value.toLowerCase()) > -1
     );
     filteredOptions.splice(6, filteredOptions.length - 6);
 
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
       filteredOptions,
-      valueInput: value
+      valueInput: value,
     }));
   }
   handleKeyDown(event) {
@@ -101,209 +100,224 @@ class AdminBar extends React.Component {
       this.handleClickSearch();
     }
     if (event.key === "Escape") {
-      this.setState(state => ({
+      this.setState((state) => ({
         ...state,
-        visibleContentResult: false
-    }));
-  }
+        visibleContentResult: false,
+      }));
+    }
   }
 
   renderResultSearch(resultSearch = null) {
-    return JSON.stringify(getDataByPath(this.state.valueInput), (_, v) =>{
-        switch (typeof v){
+    return JSON.stringify(
+      getDataByPath(this.state.valueInput),
+      (_, v) => {
+        switch (typeof v) {
           case "bigint":
-          case "BigInt":{
-            return v.toString()
+          case "BigInt": {
+            return v.toString();
           }
-          default:{
-            return v
+          default: {
+            return v;
           }
         }
-    }
-      , 2);
+      },
+      2
+    );
   }
-
 
   handleOutsideClick(event) {
     const path = event.path || (event.composedPath && event.composedPath());
 
     if (!path.includes(this.popupHistoryRef.current)) {
-      this.setState(state => ({
+      this.setState((state) => ({
         ...state,
-        visiblePopupHistory: false
-      }))
+        visiblePopupHistory: false,
+      }));
     }
     if (!path.includes(this.popupTemplateRef.current)) {
-      this.setState(state => ({
+      this.setState((state) => ({
         ...state,
-        visiblePopupTemplate: false
+        visiblePopupTemplate: false,
       }));
     }
     if (!path.includes(this.searchContentResult.current)) {
-      this.setState(state => ({
+      this.setState((state) => ({
         ...state,
-        visibleContentResult: false
+        visibleContentResult: false,
       }));
     }
-    if (!path.includes(this.autocomplete.current) && !path.includes(this.searchInput.current)) {
-      this.setState(state => ({
+    if (
+      !path.includes(this.autocomplete.current) &&
+      !path.includes(this.searchInput.current)
+    ) {
+      this.setState((state) => ({
         ...state,
-        visibleAutocomplete: false
+        visibleAutocomplete: false,
       }));
     }
   }
 
   handleClickCopy() {
-    JSON.stringify(getDataByPath(this.state.valueInput), (_, v) =>{
-        switch (typeof v){
+    JSON.stringify(
+      getDataByPath(this.state.valueInput),
+      (_, v) => {
+        switch (typeof v) {
           case "bigint":
-          case "BigInt":{
-            return v.toString()
+          case "BigInt": {
+            return v.toString();
           }
-          default:{
-            return v
+          default: {
+            return v;
           }
         }
-      }
-      , "\t").select();
+      },
+      "\t"
+    ).select();
     document.execCommand("copy");
   }
 
   updateCurrentPage = async () => {
-    let result = confirm('Are You Sure');
-    if(! result){
+    let result = confirm("Are You Sure");
+    if (!result) {
       return;
     }
 
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      update: true
-    }))
+      update: true,
+    }));
 
-    await upgradeBackend(['pages'], [this.props.idPage])
+    await upgradeBackend(["pages"], [this.props.idPage]);
 
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      update: false
-    }))
+      update: false,
+    }));
 
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   handleClickSearch() {
     let options = localStorage.getItem("admin-bar-search-autocomplete")
       ? JSON.parse(localStorage.getItem("admin-bar-search-autocomplete"))
       : [];
-    options.push(this.state.valueInput);
-    localStorage.setItem(
-      "admin-bar-search-autocomplete",
-      JSON.stringify(options)
-    );
-    this.setState(state => ({
+    if (!options.includes(this.state.valueInput)) {
+      options.push(this.state.valueInput);
+      localStorage.setItem(
+        "admin-bar-search-autocomplete",
+        JSON.stringify(options)
+      );
+    }
+    this.setState((state) => ({
       // ...state, contentResult: this.renderResultSearch(getDataByPath(this.state.valueInput)), visibleContentResult: true
       ...state,
       contentResult: this.renderResultSearch(),
-      visibleContentResult: true
+      visibleContentResult: true,
     }));
   }
 
   handleClickOptions(valueInput) {
     return () => {
-      this.setState(state => ({
+      this.setState((state) => ({
         ...state,
         visibleAutocomplete: false,
-        valueInput
+        valueInput,
       }));
       this.handleClickSearch();
     };
   }
 
   onFocus() {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      visibleAutocomplete: true
+      visibleAutocomplete: true,
     }));
   }
 
   handleDoubleClickSearch() {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      visibleContentResult: false
+      visibleContentResult: false,
     }));
   }
 
   logout = async () => {
-    const res = await new Resource({route:'/logout'}).post();
+    const res = await new Resource({ route: "/logout" }).post();
     location.reload();
-  }
+  };
 
   toggleBar = () => {
     this.setState({
-      barIsOpened: !this.state.barIsOpened
-    })
-    this.frontAppPadding(!this.state.barIsOpened)
-  }
+      barIsOpened: !this.state.barIsOpened,
+    });
+    this.frontAppPadding(!this.state.barIsOpened);
+  };
 
   frontAppPadding = (barIsOpened) => {
-    let frontAppPadding = barIsOpened ? "true" : "false"
+    let frontAppPadding = barIsOpened ? "true" : "false";
 
-    const root = document.querySelector(':root');
+    const root = document.querySelector(":root");
 
     const components = [
-      'front-app',
-      'front-app-adaptive1070',
-      'front-app-adaptive667'
-    ]
+      "front-app",
+      "front-app-adaptive1070",
+      "front-app-adaptive667",
+    ];
 
-    components.forEach(component => {
+    components.forEach((component) => {
       root.style.setProperty(
-        `--${component}-padding`, `var(--${component}-${frontAppPadding})`
-      )
-    })
-  }
+        `--${component}-padding`,
+        `var(--${component}-${frontAppPadding})`
+      );
+    });
+  };
 
   htmlDecode(content) {
-    let e = document.createElement('div');
+    let e = document.createElement("div");
     e.innerHTML = content;
-    console.log(content)
+    console.log(content);
     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
   }
 
   toggleVisiblePopupHistory = () => {
     this.setState({
-      visiblePopupHistory: !this.state.visiblePopupHistory
-    })
-  }
+      visiblePopupHistory: !this.state.visiblePopupHistory,
+    });
+  };
 
   getUserHistory = async () => {
     const arrayRevisions = await new Resource({
-      route: `/admin/ajax/templates/${this.props.idPage}/reviews`
+      route: `/admin/ajax/templates/${this.props.idPage}/reviews`,
     }).getAll();
 
-    arrayRevisions.reverse()
+    arrayRevisions.reverse();
 
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      arrayRevisions
-    }))
-  }
+      arrayRevisions,
+    }));
+  };
 
   render() {
     let isInIframe;
 
     try {
-        isInIframe = window.self !== window.top;
+      isInIframe = window.self !== window.top;
     } catch (e) {
-        isInIframe = true;
+      isInIframe = true;
     }
 
     if (isInIframe) {
-      return '';
+      return "";
     }
 
     return (
       <AdminBarWrapper>
-        <div className={"admin-bar bvi-hide " + (this.state.barIsOpened ? '' : 'closed')}>
+        <div
+          className={
+            "admin-bar bvi-hide " + (this.state.barIsOpened ? "" : "closed")
+          }
+        >
           <div className="admin-bar__tools">
             <div className="admin-bar__link" onClick={this.openPageAdmin}>
               Admin
@@ -311,7 +325,7 @@ class AdminBar extends React.Component {
             <div className="admin-bar__tool">
               <span onClick={this.toggleVisiblePopupTemplate}>
                 {iconsManager.renderIcon("admin-new-bar", {
-                  className: "admin-bar__tool-svg"
+                  className: "admin-bar__tool-svg",
                 })}{" "}
                 Edit Template
               </span>
@@ -322,7 +336,7 @@ class AdminBar extends React.Component {
                   ref={this.popupTemplateRef}
                 >
                   {this.props.areas.map((item, index) => {
-                    if(item.id === "popups" && item.templates.length > 0)
+                    if (item.id === "popups" && item.templates.length > 0)
                       return (
                         <div
                           className="admin-bar__popup-template-item admin-bar__popup-popups"
@@ -330,7 +344,7 @@ class AdminBar extends React.Component {
                         >
                           popup:{" "}
                           {iconsManager.renderIcon("chevron-admin-bar", {
-                            className: "admin-bar__popup-template-chevron"
+                            className: "admin-bar__popup-template-chevron",
                           })}
                           <div className="admin-bar__popup-popups-items">
                             {item.templates.map((item, index) => (
@@ -347,7 +361,7 @@ class AdminBar extends React.Component {
                         </div>
                       );
                     else {
-                      if(item.template?.name)
+                      if (item.template?.name)
                         return (
                           <div
                             className="admin-bar__popup-template-item"
@@ -364,28 +378,31 @@ class AdminBar extends React.Component {
             </div>
             <div className="admin-bar__tool" onClick={this.openPageSettings}>
               {iconsManager.renderIcon("admin-settings-bar", {
-                className: "admin-bar__tool-svg"
+                className: "admin-bar__tool-svg",
               })}{" "}
               Page Settings
             </div>
             {this.mbRenderMenusLinks()}
             {/*<div className="admin-bar__tool">*/}
-              {/*{iconsManager.renderIcon('admin-bar3', {className: "admin-bar__tool-svg"})} Clear Cache*/}
+            {/*{iconsManager.renderIcon('admin-bar3', {className: "admin-bar__tool-svg"})} Clear Cache*/}
             {/*</div>*/}
-
-            </div>
+          </div>
 
           <div className="admin-bar__left">
-
-            <div className="admin-bar__search-bar" ref={this.searchContentResult}>
+            <div
+              className="admin-bar__search-bar"
+              ref={this.searchContentResult}
+            >
               {this.state.visibleContentResult && (
                 <div className="admin-bar__search-result">
                   <pre
                     className="admin-bar__search-content"
                     style={this.state.isHttps ? { paddingBottom: "22px" } : {}}
-                    dangerouslySetInnerHTML={{ __html: this.state.contentResult }}
+                    dangerouslySetInnerHTML={{
+                      __html: this.state.contentResult,
+                    }}
                   />
-                  { this.state.isHttps && (
+                  {this.state.isHttps && (
                     <div
                       className="admin-bar__search-button"
                       onClick={this.handleClickCopy}
@@ -397,19 +414,22 @@ class AdminBar extends React.Component {
               )}
 
               {this.state.visibleAutocomplete &&
-              this.state.filteredOptions.length !== 0 && (
-                <div className="admin-bar__autocomplete" ref={this.autocomplete}>
-                  {this.state.filteredOptions.map((item, index) => (
-                    <div
-                      key={index}
-                      className="admin-bar__autocomplete-option"
-                      onClick={this.handleClickOptions(item)}
-                    >
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              )}
+                this.state.filteredOptions.length !== 0 && (
+                  <div
+                    className="admin-bar__autocomplete"
+                    ref={this.autocomplete}
+                  >
+                    {this.state.filteredOptions.map((item, index) => (
+                      <div
+                        key={index}
+                        className="admin-bar__autocomplete-option"
+                        onClick={this.handleClickOptions(item)}
+                      >
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                )}
               <input
                 className="admin-bar__search"
                 value={this.state.valueInput}
@@ -436,20 +456,24 @@ class AdminBar extends React.Component {
             </div>
 
             <div className="admin-bar__profile">
-            <span>
-              Hello,
-              {this.props.data.name ? this.props.data.name : this.props.data.email}
-            </span>
-              <button className="admin-bar__button"
-                      onClick={this.logout}
-              >
+              <span>
+                Hello,
+                {this.props.data.name
+                  ? this.props.data.name
+                  : this.props.data.email}
+              </span>
+              <button className="admin-bar__button" onClick={this.logout}>
                 Logout
               </button>
             </div>
-
           </div>
 
-          <div className={'admin-bar__arrow ' + (this.state.barIsOpened ? '' : 'closed')} onClick={this.toggleBar}>
+          <div
+            className={
+              "admin-bar__arrow " + (this.state.barIsOpened ? "" : "closed")
+            }
+            onClick={this.toggleBar}
+          >
             <div></div>
           </div>
         </div>
@@ -458,39 +482,37 @@ class AdminBar extends React.Component {
   }
 
   mbRenderMenusLinks() {
-    const menus = window.altrp?.menus || []
+    const menus = window.altrp?.menus || [];
 
-    if(! menus.length){
-      return ''
+    if (!menus.length) {
+      return "";
     }
-    return    <div className="admin-bar__tool">
-              <span onClick={this.toggleVisiblePopupMenus}>
-                {iconsManager.renderIcon("admin-new-bar", {
-                  className: "admin-bar__tool-svg"
-                })}{" "}
-                Edit Menu
-              </span>
+    return (
+      <div className="admin-bar__tool">
+        <span onClick={this.toggleVisiblePopupMenus}>
+          {iconsManager.renderIcon("admin-new-bar", {
+            className: "admin-bar__tool-svg",
+          })}{" "}
+          Edit Menu
+        </span>
 
-      {this.state.visiblePopupMenus && (
-        <div
-          className="admin-bar__popup-template admin-bar__popup-template_menus"
-        >
-          {menus.map((item, index) => {
-
-                return (
-                  <div
-                    className="admin-bar__popup-template-item"
-                    key={`menu-${index}`}
-                    onClick={this.openMenu(item.id)}
-                  >
-                    {item?.name}
-                  </div>
-                );
-            })
-          }
-        </div>
-      )}
-    </div>
+        {this.state.visiblePopupMenus && (
+          <div className="admin-bar__popup-template admin-bar__popup-template_menus">
+            {menus.map((item, index) => {
+              return (
+                <div
+                  className="admin-bar__popup-template-item"
+                  key={`menu-${index}`}
+                  onClick={this.openMenu(item.id)}
+                >
+                  {item?.name}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
   }
 }
 
