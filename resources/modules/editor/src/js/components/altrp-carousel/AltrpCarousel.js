@@ -298,6 +298,10 @@ class AltrpCarousel extends Component {
       },
       // adaptiveHeight: false,
     };
+    if(vertical){
+      settings.verticalSwiping = true
+      settings.swipeToSlide = true
+    }
     const lightbox_slides_content = getResponsiveSetting(this.props, 'lightbox_slides_content')
     const overlay_select_heading_additional_content = getResponsiveSetting(this.props, 'overlay_select_heading_additional_content')
 
