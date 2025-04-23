@@ -2,6 +2,7 @@ import AdminBarWrapper from "./AdminBarWrapper";
 import Resource from "../../../../editor/src/js/classes/Resource";
 import upgradeBackend from "../../../../admin/src/js/functions/upgradeBackend";
 import getDataByPath from "../functions/getDataByPath";
+import cn from "classnames";
 
 class AdminBar extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class AdminBar extends React.Component {
       visibleContentResult: false,
       visibleAutocomplete: false,
       filteredOptions: [],
+      chosenOption: undefined,
       isHttps: false,
       barIsOpened: false,
       arrayRevisions: null,
@@ -33,6 +35,7 @@ class AdminBar extends React.Component {
     this.handleClickSearch = this.handleClickSearch.bind(this);
     this.handleDoubleClickSearch = this.handleDoubleClickSearch.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.onClick = this.onClick.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.handleClickOptions = this.handleClickOptions.bind(this);
   }
@@ -97,12 +100,44 @@ class AdminBar extends React.Component {
   }
   handleKeyDown(event) {
     if (event.key === "Enter") {
-      this.handleClickSearch();
+      if (
+        this.state.visibleAutocomplete &&
+        this.state.chosenOption !== undefined
+      ) {
+        this.setState((state) => ({
+          ...state,
+          visibleAutocomplete: false,
+          valueInput: this.state.filteredOptions[this.state.chosenOption],
+        }));
+      } else {
+        this.handleClickSearch();
+      }
     }
     if (event.key === "Escape") {
       this.setState((state) => ({
         ...state,
+        visibleAutocomplete: false,
         visibleContentResult: false,
+      }));
+    }
+    if (event.key === "ArrowDown") {
+      const chosenOption =
+        this.state.chosenOption < this.state.filteredOptions.length - 1
+          ? this.state.chosenOption + 1
+          : 0;
+      this.setState((state) => ({
+        ...state,
+        chosenOption,
+      }));
+    }
+    if (event.key === "ArrowUp") {
+      const chosenOption =
+        this.state.chosenOption > 0
+          ? this.state.chosenOption - 1
+          : this.state.filteredOptions.length - 1;
+      this.setState((state) => ({
+        ...state,
+        chosenOption,
       }));
     }
   }
@@ -225,6 +260,13 @@ class AdminBar extends React.Component {
       }));
       this.handleClickSearch();
     };
+  }
+
+  onClick() {
+    this.setState((state) => ({
+      ...state,
+      visibleAutocomplete: true,
+    }));
   }
 
   onFocus() {
@@ -422,7 +464,10 @@ class AdminBar extends React.Component {
                     {this.state.filteredOptions.map((item, index) => (
                       <div
                         key={index}
-                        className="admin-bar__autocomplete-option"
+                        className={cn("admin-bar__autocomplete-option", {
+                          "admin-bar__autocomplete-option_highlighted":
+                            this.state.chosenOption === index,
+                        })}
                         onClick={this.handleClickOptions(item)}
                       >
                         {item}
@@ -436,6 +481,7 @@ class AdminBar extends React.Component {
                 onChange={this.handleInput}
                 onKeyDown={this.handleKeyDown}
                 onFocus={this.onFocus}
+                onClick={this.onClick}
                 ref={this.searchInput}
                 placeholder="source"
               />
