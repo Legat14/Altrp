@@ -96,6 +96,8 @@ class AdminBar extends React.Component {
       ...state,
       filteredOptions,
       valueInput: value,
+      visibleAutocomplete: true,
+      chosenOption: undefined,
     }));
   }
   handleKeyDown(event) {
@@ -108,6 +110,7 @@ class AdminBar extends React.Component {
           ...state,
           visibleAutocomplete: false,
           valueInput: this.state.filteredOptions[this.state.chosenOption],
+          chosenOption: undefined,
         }));
       } else {
         this.handleClickSearch();
@@ -118,9 +121,11 @@ class AdminBar extends React.Component {
         ...state,
         visibleAutocomplete: false,
         visibleContentResult: false,
+        chosenOption: undefined,
       }));
     }
     if (event.key === "ArrowDown") {
+      event.preventDefault();
       const chosenOption =
         this.state.chosenOption < this.state.filteredOptions.length - 1
           ? this.state.chosenOption + 1
@@ -131,6 +136,7 @@ class AdminBar extends React.Component {
       }));
     }
     if (event.key === "ArrowUp") {
+      event.preventDefault();
       const chosenOption =
         this.state.chosenOption > 0
           ? this.state.chosenOption - 1
@@ -188,6 +194,7 @@ class AdminBar extends React.Component {
       this.setState((state) => ({
         ...state,
         visibleAutocomplete: false,
+        chosenOption: undefined,
       }));
     }
   }
@@ -256,6 +263,7 @@ class AdminBar extends React.Component {
       this.setState((state) => ({
         ...state,
         visibleAutocomplete: false,
+        chosenOption: undefined,
         valueInput,
       }));
       this.handleClickSearch();
