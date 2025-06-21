@@ -28,6 +28,7 @@ const DEFAULT_REACT_ELEMENTS = [
   'input-gallery',
   'input-crop-image',
   'posts',
+  'cards',
   'breadcrumbs',
   'carousel',
   'map',

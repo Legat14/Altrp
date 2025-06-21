@@ -50,7 +50,8 @@
   opacity: 1;
 
 }
-.altrp-widget_posts{
+.altrp-widget_posts,
+.altrp-widget_cards {
   & > div > .altrp-pagination-pages,
   & > .altrp-pagination-pages{
     justify-content: center;

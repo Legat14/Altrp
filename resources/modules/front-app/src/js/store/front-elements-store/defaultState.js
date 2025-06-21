@@ -217,6 +217,12 @@ export const defaultState = [
     }
   },
   {
+    name: "cards",
+    import: async () => {
+      return await import(/* webpackChunkName: 'CostsWidget' */ "../../../../../editor/src/js/components/widgets/CardsWidget");
+    }
+  },
+  {
     name: "nav",
     import: async () => {
       return await import(/* webpackChunkName: 'NavWidget' */ "../../../../../editor/src/js/components/widgets/NavWidget");

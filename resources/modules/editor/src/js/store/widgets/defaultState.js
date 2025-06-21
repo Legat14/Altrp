@@ -63,11 +63,13 @@ import Nav from "../../classes/elements/Nav";
 import Table from "../../classes/elements/Table";
 import Template from "../../classes/elements/Template";
 import Posts from "../../classes/elements/Posts";
+import Cards from "../../classes/elements/Cards";
 import Map from "../../classes/elements/Map";
 import Menu from "../../classes/elements/Menu";
 import MapConstructor from "../../classes/elements/MapConstructor";
 import Dashboards from "../../classes/elements/Dashboards";
 import PostsWidget from "../../components/widgets/PostsWidget";
+import CardsWidget from "../../components/widgets/CardsWidget";
 import Gallery from "../../classes/elements/Gallery";
 import Tour from "../../classes/elements/Tour";
 import TourGuide from "../../components/widgets/TourGuide";
@@ -97,7 +99,7 @@ import InputMultiSelect from "../../classes/elements/InputMultiSelect";
 import InputMultiSelectWidget from "../../components/widgets/InputMultiSelectWidget";
 import Scheduler from "../../classes/elements/Scheduler";
 import SchedulerWidget from "../../components/widgets/SchedulerWidget";
-import Icon from '../../classes/elements/Icon';
+import Icon from "../../classes/elements/Icon";
 import IconWidget from "../../components/widgets/IconWidget";
 import InputTextAutocomplete from "../../classes/elements/InputTextAutocomplete";
 import InputTextAutocompleteWidget from "../../components/widgets/InputTextAutocompleteWidget";
@@ -107,7 +109,7 @@ import InputSelectTree from "../../classes/elements/InputSelectTree";
 import InputSelectTreeWidget from "../../components/widgets/InputSelectTreeWidget";
 import InputDateRange from "../../classes/elements/InputDateRange";
 import InputDateRangeWidget from "../../components/widgets/InputDateRangeWidget";
-import InputCropImage from '../../classes/elements/InputCropImage';
+import InputCropImage from "../../classes/elements/InputCropImage";
 import InputCropImageWidget from "../../components/widgets/InputCropImageWidget";
 import PieDiagram from "../../classes/elements/diagrams/PieDiagram";
 import PieDiagramWidget from "../../components/widgets/diagrams/PieDiagramWidget";
@@ -131,8 +133,8 @@ import FeedbackWidget from "../../components/widgets/FeedbackWidget";
 import InputPagination from "../../classes/elements/InputPagination";
 import InputPaginationWidget from "../../components/widgets/InputPaginationWidget";
 
-const elements = {}
-const components = {}
+const elements = {};
+const components = {};
 
 // elements[Input.getName()] = Input;
 //список элементов
@@ -175,6 +177,7 @@ elements[InputPagination.getName()] = InputPagination;
 
 elements[Table.getName()] = Table;
 elements[Posts.getName()] = Posts;
+elements[Cards.getName()] = Cards;
 elements[Gallery.getName()] = Gallery;
 elements[Carousel.getName()] = Carousel;
 elements[Map.getName()] = Map;
@@ -195,7 +198,7 @@ elements[LineDiagram.getName()] = LineDiagram;
 elements[FunnelDiagram.getName()] = FunnelDiagram;
 elements[RadarDiagram.getName()] = RadarDiagram;
 
-elements[Tournament.getName()] = Tournament
+elements[Tournament.getName()] = Tournament;
 elements[Feedback.getName()] = Feedback;
 elements[Column.getName()] = Column;
 elements[Section.getName()] = Section;
@@ -244,6 +247,7 @@ components[Text.getName()] = TextWidget;
 components[Image.getName()] = ImageWidget;
 components[Table.getName()] = TableWidget;
 components[Posts.getName()] = PostsWidget;
+components[Cards.getName()] = CardsWidget;
 components[Nav.getName()] = NavWidget;
 components[Divider.getName()] = DividerWidget;
 components[Tabs.getName()] = TabsWidget;
@@ -278,20 +282,20 @@ components[Tree.getName()] = TreeWidget;
 components[Icon.getName()] = IconWidget;
 components[Stars.getName()] = StarsWidget;
 components[ProgressBar.getName()] = ProgressBarWidget;
-components[Tournament.getName()] = TournamentWidget
-components[Feedback.getName()] = FeedbackWidget
+components[Tournament.getName()] = TournamentWidget;
+components[Feedback.getName()] = FeedbackWidget;
 
 export default {
-    elements: {
-        ...elements
-    },
-    components: {
-        ...components
-    },
-    allElements: {
-        ...elements
-    },
-    allComponents: {
-        ...components
-    }
-}
+  elements: {
+    ...elements,
+  },
+  components: {
+    ...components,
+  },
+  allElements: {
+    ...elements,
+  },
+  allComponents: {
+    ...components,
+  },
+};
