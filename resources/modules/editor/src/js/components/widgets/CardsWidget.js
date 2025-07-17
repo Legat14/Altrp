@@ -16,7 +16,6 @@ class CardsWidget extends Component {
     if (props.baseRender) {
       this.render = props.baseRender(this);
     }
-    console.count('<<<<<< CardsWidget >>>>>>');
   }
 
   /**
