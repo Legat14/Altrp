@@ -425,8 +425,11 @@ window.altrp_dictionary = ${JSON.stringify(_content.dictionary)};
         /* ]]> */
 </script>`
       let all_styles = _all_styles
+      const cardsDataForSubstitution = this.getCardsDataForSubstitution(page_areas, datasources);
+
       content = mustache.render(content, {
         ...altrpContext,
+        ...cardsDataForSubstitution,
         dictionary,
         altrpContext,
         access_classes,
@@ -776,6 +779,37 @@ window.altrp_dictionary = ${JSON.stringify(_content.dictionary)};
     elementNames = _.uniq(elementNames)
 
     return elementNames;
+  }
+
+  private extractElements(name: string, areas: any[]) {
+    let result: any[] = [];
+
+    if (!areas.length) return result;
+
+    areas.forEach(area => {
+
+      //------ extracts children first from areas, than from area's descendants
+      const children = area?.template?.data?.children || area?.children || [];
+      if (children.length) {
+        result.push(...children.filter(child => child.name === name));
+          result.push(...this.extractElements(name, children));
+      }
+    })
+
+    return result;
+  }
+
+  private getCardsDataForSubstitution (pageAreas: string, datasources: object) {
+      const cardsWidgets = this.extractElements('cards', JSON.parse(pageAreas));
+      const cardsDataSources = cardsWidgets.map(widget =>({id: widget.id, dataSources: widget.settings.posts_datasource.replace('altrpdata.', '')}));
+      const cardsData: {id: string, data: object[] | undefined}[] = cardsDataSources.map(source => ({id: source.id, data: _.get(datasources, source.dataSources)}));
+      const cardsDataForSubstitution = cardsData ? cardsData.reduce((accum, data) => {
+      const dataItem = data.data ? data.data.reduce((accum, item, index) => {
+          return {...accum, ..._.mapKeys(item, (_, key) => `${key}${data.id}_${index}`)};
+        }, {}) : {};
+        return {...accum, ...dataItem};
+      }, {}) : {};
+      return cardsDataForSubstitution;
   }
 
   private async prepareContent(content: string,  { lang }): Promise<{content: string, dictionary: {  }}> {
